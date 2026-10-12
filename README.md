@@ -37,10 +37,31 @@
 
 ## 安装
 
-本机已经装好了（desktop profile）。手工装/重装：
+### 给别人装（从 GitHub）
+
+在 DSH 的「**设置 → 插件**」里用安装入口填这个安装说明符：
+
+```
+github:BlankTasftu/dsh-delivery-library
+```
+
+它和 `dsh plugin --profile <你的 profile> add github:BlankTasftu/dsh-delivery-library` 是同一个
+安装说明符（桌面端不自带 `dsh` 命令行，所以多数人走设置页）。插件管理器会把它写进
+profile 的依赖与 bundles 清单，再交给 pnpm 安装 —— 与 `dsh-ark`、`dsh-media-preview`
+那类插件的安装方式完全一致。
+
+**无需刷新即可生效**：宿主会把新的启动图经 `/plugins/events`（SSE）推给已打开的页面，
+页面随即物化并挂上这个条目。页签没出现时再按一次 F5。
+
+装好后想确认拿到的是不是完整件，可以直接在安装目录里跑自带测试（**零依赖，不需要装任何东西**）：
 
 ```powershell
-# 用 DSH 插件管理器（推荐：它同时写 profile 依赖与 bundles 清单）
+node --test "test/*.test.mjs"     # 期望 60/60
+```
+
+### 本机开发（软链到工作区）
+
+```powershell
 dsh plugin --profile desktop add link:D:\DeepSeekSpace\插件
 ```
 
@@ -51,10 +72,7 @@ dsh plugin --profile desktop add link:D:\DeepSeekSpace\插件
 "dsh": { "profile": { "bundles": [ /* … */, "dsh-delivery-library" ] } }
 ```
 
-然后在该目录跑 `pnpm install`。
-
-> **启用后一般无需刷新**：宿主会把新的启动图经 `/plugins/events`（SSE）推给已打开的
-> 页面，页面随即物化并挂上这个条目（0.2.0 实测如此）。页签没出现时再按一次 F5。
+然后在该目录跑 `pnpm install`。软链的好处是改完 `lib/client.js` 刷新页面即生效。
 
 ⚠️ **给改这个插件的人（也包括未来的我）**：客户端插件的 `apply` 里**任何未捕获异常
 都会让桌面端直接退出** —— 渲染进程的启动审计会把未达 `active` 的条目上报为
@@ -62,13 +80,16 @@ dsh plugin --profile desktop add link:D:\DeepSeekSpace\插件
 所以本插件的 `apply` 被刻意写成**整体不可抛**（每步单独 try/catch），失败只降级、
 并把面包屑写进 `shell.overlay` 的诊断条目。详见 [docs/DESIGN.md](docs/DESIGN.md#5-事故记录一次把桌面端打崩的-apply-抛错010--020)。
 
-自查（本机只读探针，SSE 通道免鉴权）：
+### 装完/出问题时自查（只读探针，随包一起交付）
 
 ```powershell
-$NODE = "$env:USERPROFILE\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\node\bin\node.exe"
-& $NODE tools\check-boot-graph.mjs      # 插件在不在启动图、在哪个批次、批次脚本能否取到
-& $NODE tools\check-host-resolution.mjs # 从 profile 出发能否解析到 browser bundle
+node tools/check-host-resolution.mjs   # 从 profile 出发能否解析到 browser bundle
+node tools/check-boot-graph.mjs        # 插件在不在启动图、在哪个批次、批次能否投递
+node tools/check-profile-patch.mjs     # profile 的 patch 层 YAML 是否完好、关键条目是否还在
 ```
+
+地址/路径都可覆盖：`DSH_PROFILE_DIR`、`DSH_WEB_URL`、`DSH_ASAR_PATH`（见
+[tools/paths.mjs](tools/paths.mjs)）。
 
 崩溃日志（如果哪天又崩了，先看这里）：
 
@@ -76,8 +97,7 @@ $NODE = "$env:USERPROFILE\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\nod
 %APPDATA%\@deepseek-ai\dsh-desktop\logs\crash-*-web-boot.log
 ```
 
-卸载：`dsh plugin --profile desktop remove dsh-delivery-library`，或从
-`dsh.profile.bundles` 里删掉包名再 `pnpm install`；也可以在「设置 → 插件」里停用该 bundle。
+卸载：设置 → 插件里停用或卸载该 bundle；或从 `dsh.profile.bundles` 里删掉包名再 `pnpm install`。
 
 ## 数据口径（哪些文件会出现在这里）
 

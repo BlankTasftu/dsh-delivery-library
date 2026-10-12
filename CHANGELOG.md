@@ -2,6 +2,19 @@
 
 本插件没有构建步骤：`lib/` 下就是发货文件本身，改完刷新页面即生效。
 
+## 0.2.1 — 2026-10-12
+
+**面向"别人装得下、装完能自证"的打包修正（不改运行逻辑）。**
+
+- 修复：`files` 之前没包含 `test/` 与 `tools/`，但 package.json 里带着 `test` 脚本 ——
+  从 GitHub 装到别人的机器上以后，`pnpm test` 会得到 `tests 0` 且退出码非 0。
+  现在测试与只读排查工具随包交付：装完即可 `node --test "test/*.test.mjs"` 自证 60/60。
+- 修复：`tools/check-profile-patch.mjs` 的 js-yaml 缓存从工作区 `.cache/` 改到系统临时目录
+  —— 包被安装在 node_modules 里时不再往包目录/工作区写文件。
+- 文档：README「安装」重写为**给别人装在前**：插件管理器的安装说明符
+  `github:BlankTasftu/dsh-delivery-library`、装完自检命令、三个只读排查探针，
+  以及"桌面端不自带 `dsh` CLI"这件事。
+
 ## 0.2.0 — 2026-10-12
 
 **修复一个会导致 DSH 桌面端退出的缺陷（0.1.0 引入）。**

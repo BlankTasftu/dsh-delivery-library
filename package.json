@@ -1,6 +1,6 @@
 {
   "name": "dsh-delivery-library",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "在 DSH 对话窗的「对话 / 轨迹」之外再加一个「交付文件」视图：汇总当前会话里全部显式交付（present）与文件产出（write / edit），一个会话一份可检索的文件库。",
   "keywords": [
     "dsh",
@@ -30,7 +30,9 @@
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
-    "docs"
+    "docs",
+    "test",
+    "tools"
   ],
   "dsh": {
     "bundle": {

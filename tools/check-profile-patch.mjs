@@ -17,12 +17,14 @@
  * 退出码：0 = 正常；1 = 有问题（YAML 坏了或缺关键条目）。
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { dirname, join, resolve } from 'node:path'
-import { fileURLToPath, pathToFileURL } from 'node:url'
+import { join, resolve } from 'node:path'
+import { tmpdir } from 'node:os'
+import { pathToFileURL } from 'node:url'
 import { asarPath as resolveAsarPath, profileDir as defaultProfileDir } from './paths.mjs'
 
-const here = dirname(fileURLToPath(import.meta.url))
-const workspace = resolve(here, '..')
+// 缓存放系统临时目录：这样即使这个包被安装在 node_modules 里（只读或不该被写），
+// 工具也不会往包目录或工作区里落文件。
+const cacheDir = join(tmpdir(), 'dsh-delivery-library-tools')
 
 const args = process.argv.slice(2)
 const asarFlag = args.indexOf('--asar')
@@ -30,9 +32,8 @@ const asarPath = resolveAsarPath(asarFlag >= 0 ? args[asarFlag + 1] : undefined)
 const positional = args.find((value, index) => value.startsWith('--') === false && index !== asarFlag + 1)
 const profileDir = resolve(positional ?? defaultProfileDir())
 
-/** 从 app.asar 抽出 js-yaml 的 ESM 单文件（缓存到工作区 .cache/）。 */
+/** 从 app.asar 抽出 js-yaml 的 ESM 单文件（缓存到系统临时目录，不落进工作区/包目录）。 */
 function loadYaml() {
-  const cacheDir = join(workspace, '.cache')
   const cachePath = join(cacheDir, 'js-yaml.mjs')
   if (!existsSync(cachePath)) {
     if (!existsSync(asarPath)) throw new Error(`找不到 app.asar：${asarPath}`)
