@@ -1,0 +1,21 @@
+# ============================================================================
+# dsh-delivery-library —— DSH bundle patch
+# ============================================================================
+# 把「交付文件库」视图挂进 profile 配置树。DSH 启动时按 bundle 层栈叠加各插件的
+# patch，本文件负责把 dsh-delivery-library 这一行插进去。
+#
+# 本插件**没有宿主半侧行为**（lib/index.js 是空的 apply），全部功能在浏览器半侧
+# 的 lib/client.js 里：它往 `conversation.view` 座位注册第三个视图（对话、轨迹
+# 之外），并从**当前会话已载入的事件窗口**里折叠出交付文件清单。
+# 因此这里不需要 config 块 —— 没有任何可配置项。
+#
+# 安装（本地开发）：
+#   dsh plugin --profile desktop add <本目录绝对路径>
+# 或手工：在 profile 的 package.json 里加一条 link: 依赖 + 把包名加进
+#   dsh.profile.bundles，然后 pnpm install。
+# 卸载：从 dsh.profile.bundles 里删掉包名并 pnpm install。
+# ============================================================================
+
+- insert:
+    - id: dsh-delivery-library
+      name: dsh-delivery-library

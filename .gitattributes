@@ -1,0 +1,8 @@
+# 统一行尾：仓库内一律 LF，避免 Windows 上产生整文件假改动。
+* text=auto eol=lf
+
+# 二进制/生成物若将来出现，别做文本归一
+*.png binary
+*.ico binary
+*.jpg binary
+*.woff2 binary

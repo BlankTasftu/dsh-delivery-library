@@ -1,0 +1,14 @@
+# 本插件不含构建产物：lib/ 下就是手写的发货文件（见 README「开发」）。
+# 这里忽略的是本地开发时可能出现的临时物与依赖。
+
+node_modules/
+.cache/
+.tmp-*
+*.log
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store

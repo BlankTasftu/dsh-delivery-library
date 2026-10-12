@@ -1,0 +1,63 @@
+{
+  "name": "dsh-delivery-library",
+  "version": "0.2.0",
+  "description": "在 DSH 对话窗的「对话 / 轨迹」之外再加一个「交付文件」视图：汇总当前会话里全部显式交付（present）与文件产出（write / edit），一个会话一份可检索的文件库。",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "delivery",
+    "deliverables",
+    "present",
+    "conversation",
+    "view"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "docs"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "author": "BlankTasftu",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BlankTasftu/dsh-delivery-library.git"
+  },
+  "homepage": "https://github.com/BlankTasftu/dsh-delivery-library#readme",
+  "bugs": {
+    "url": "https://github.com/BlankTasftu/dsh-delivery-library/issues"
+  }
+}
